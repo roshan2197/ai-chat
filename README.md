@@ -1,73 +1,86 @@
-# React + TypeScript + Vite
+# AI Chat
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Simple full-stack AI chat app with:
+- React + Vite + TypeScript frontend
+- Express backend proxy for Groq API
+- Basic local RAG-style keyword retrieval (`src/knowledge-base.ts`)
 
-Currently, two official plugins are available:
+## Project Structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```txt
+.
+├── backend/
+│   └── server.js
+├── src/
+│   ├── components/Chat.tsx
+│   └── knowledge-base.ts
+└── README.md
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Prerequisites
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- Node.js 18+ (recommended)
+- npm
+- Groq API key
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Setup
+
+1. Install frontend dependencies:
+
+```bash
+npm install
 ```
+
+2. Install backend dependencies:
+
+```bash
+cd backend
+npm install
+```
+
+3. Create `backend/.env`:
+
+```env
+API_KEY=your_groq_api_key_here
+```
+
+## Run Locally
+
+1. Start backend (from `backend/`):
+
+```bash
+node server.js
+```
+
+Backend runs on `http://localhost:4000`.
+
+2. Start frontend (from project root):
+
+```bash
+npm run dev
+```
+
+Frontend runs on `http://localhost:5173` (default Vite port).
+
+## Frontend Scripts
+
+From project root:
+
+- `npm run dev` - start dev server
+- `npm run build` - type check + production build
+- `npm run preview` - preview production build
+- `npm run lint` - run ESLint
+
+## API Endpoint
+
+- `POST /api/chat`
+  - Body:
+    - `messages`: array of `{ role, content }`
+    - `context`: string (optional extra context from knowledge base)
+  - Response:
+    - `answer`: assistant response string
+
+## Notes
+
+- The model is currently hardcoded in `backend/server.js` as `llama-3.1-8b-instant`.
+- The frontend requests the backend at `http://localhost:4000/api/chat`.
